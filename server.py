@@ -1,3 +1,4 @@
+import __init__
 import os
 import time
 from flask import Flask, request, redirect, url_for
@@ -18,6 +19,13 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+DIR_PATH = dirname(realpath(__file__))
+PROJECT_PATH = realpath(DIR_PATH + '/..')
+SAVED_SESSIONS_DIR = PROJECT_PATH + '/data/saved_sessions'
+SESSION_PATH = SAVED_SESSIONS_DIR + '/init_session/init'
+PROB_MODEL_PATH = SAVED_SESSIONS_DIR + '/prob_model/prob_model_params.mat'
+
+
 @app.after_request
 def after_request(response):
     response.headers.add("Access-Control-Allow-Origin", "*")
@@ -34,11 +42,12 @@ def upload_file():
     if request.method == 'POST':
         code = request.get_data()
         img=base64.b64decode(code.decode().split(',')[1])
-        file=open('images/'+time.strftime("%Y%m%d%H%M%S")+'.jpg','wb')  
+        fstr='images/'+time.strftime("%Y%m%d%H%M%S")+'.jpg'
+	file=open(fstr,'wb')  
         file.write(img)  
         
 
-        image = cv2.imread(file)
+        image = cv2.imread(fstr)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # conversion to rgb
         # create pose estimator
 
@@ -59,4 +68,4 @@ def upload_file():
         return (image, pose_2d, visibility, pose_3d)
 
 if __name__ == '__main__':
-    run_simple('*',8000,app)
+    run_simple('10.0.2.4',8081,app)
