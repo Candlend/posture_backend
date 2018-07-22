@@ -70,10 +70,6 @@ def plot_pose(pose):
             _c = 4
         if j in range(14, 17):
             _c = 5
-        if j == 7:
-            _c = 1
-        if j == 8:
-            _c = 2
         return colors[_c]
 
     assert (pose.ndim == 2)
