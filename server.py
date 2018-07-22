@@ -1,4 +1,3 @@
-import __init__
 import os
 import time
 from flask import Flask, request, redirect, url_for
@@ -19,13 +18,13 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
 DIR_PATH = dirname(realpath(__file__))
 PROJECT_PATH = realpath(DIR_PATH + '/..')
 SAVED_SESSIONS_DIR = PROJECT_PATH + '/data/saved_sessions'
 IMAGE_FILE_DIR = PROJECT_PATH + '/data/images'
 SESSION_PATH = SAVED_SESSIONS_DIR + '/init_session/init'
 PROB_MODEL_PATH = SAVED_SESSIONS_DIR + '/prob_model/prob_model_params.mat'
-
 
 @app.after_request
 def after_request(response):
@@ -42,13 +41,12 @@ def allowed_file(filename):
 def upload_file():
     if request.method == 'POST':
         code = request.get_data()
-        img = base64.b64decode(code.decode().split(',')[1])
-        fstr = IMAGE_FILE_DIR+'/'+time.strftime("%Y%m%d%H%M%S")+'.jpg'
-	file=open(fstr,'wb')  
+        img=base64.b64decode(code.decode().split(',')[1])
+        file=open('IMAGE_FILE_DIR/'+time.strftime("%Y%m%d%H%M%S")+'.jpg','wb')  
         file.write(img)  
         
 
-        image = cv2.imread(fstr)
+        image = cv2.imread(file)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # conversion to rgb
         # create pose estimator
 
@@ -64,9 +62,9 @@ def upload_file():
 
         pose_estimator.close()
         # Show 2D and 3D poses
-        
+
         file.close() 
-        return (pose_2d, 200)
+        return ('pose_2d', 200)
 
 if __name__ == '__main__':
-    run_simple('10.0.2.4',8081,app)
+    run_simple('*',8000,app)
