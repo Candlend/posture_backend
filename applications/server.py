@@ -66,7 +66,8 @@ def upload_file():
         # Show 2D and 3D poses
         
         file.close() 
-        return (pose_2d, 200)
+        print(pose_2d)
+        return (base64.b64encode(pose_2d), 200)
 
 if __name__ == '__main__':
     run_simple('10.0.2.4',8081,app)
