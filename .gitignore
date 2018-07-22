@@ -7,7 +7,7 @@
 build/
 __pycache__/
 
-applications/image
+applications/image/
 
 # folders
 saved_sessions/
