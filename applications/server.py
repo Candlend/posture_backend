@@ -22,6 +22,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 DIR_PATH = dirname(realpath(__file__))
 PROJECT_PATH = realpath(DIR_PATH + '/..')
 SAVED_SESSIONS_DIR = PROJECT_PATH + '/data/saved_sessions'
+IMAGE_FILE_DIR = PROJECT_PATH + '/data/images'
 SESSION_PATH = SAVED_SESSIONS_DIR + '/init_session/init'
 PROB_MODEL_PATH = SAVED_SESSIONS_DIR + '/prob_model/prob_model_params.mat'
 
@@ -41,8 +42,8 @@ def allowed_file(filename):
 def upload_file():
     if request.method == 'POST':
         code = request.get_data()
-        img=base64.b64decode(code.decode().split(',')[1])
-        fstr='images/'+time.strftime("%Y%m%d%H%M%S")+'.jpg'
+        img = base64.b64decode(code.decode().split(',')[1])
+        fstr = IMAGE_FILE_DIR+'/'+time.strftime("%Y%m%d%H%M%S")+'.jpg'
 	file=open(fstr,'wb')  
         file.write(img)  
         
