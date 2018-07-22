@@ -4,6 +4,13 @@ from flask import Flask, request, redirect, url_for
 import base64
 from werkzeug import secure_filename
 from werkzeug.serving import run_simple
+from lifting import PoseEstimator
+from lifting.utils import draw_limbs
+from lifting.utils import plot_pose
+
+import cv2
+import matplotlib.pyplot as plt
+from os.path import dirname, realpath
 
 UPLOAD_FOLDER = '/path/to/the/uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -29,8 +36,27 @@ def upload_file():
         img=base64.b64decode(code.decode().split(',')[1])
         file=open('images/'+time.strftime("%Y%m%d%H%M%S")+'.jpg','wb')  
         file.write(img)  
-        file.close()  
-    return
+        
+
+        image = cv2.imread(file)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # conversion to rgb
+        # create pose estimator
+
+        image_size = image.shape
+        pose_estimator = PoseEstimator(image_size, SESSION_PATH, PROB_MODEL_PATH)
+        # load model
+
+        pose_estimator.initialise()
+        # estimation
+
+        pose_2d, visibility, pose_3d = pose_estimator.estimate(image)
+        # close model
+
+        pose_estimator.close()
+        # Show 2D and 3D poses
+        
+        file.close() 
+        return (image, pose_2d, visibility, pose_3d)
 
 if __name__ == '__main__':
-    run_simple('10.20.199.201',8000,app)
+    run_simple('*',8000,app)
