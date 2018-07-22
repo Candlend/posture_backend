@@ -67,7 +67,8 @@ def upload_file():
         
         file.close() 
         print(pose_2d)
-        return (base64.b64encode(pose_2d), 200)
+        draw_limbs(in_image, data_2d, joint_visibility)
+        return (base64.b64encode(in_image), 200)
 
 if __name__ == '__main__':
     run_simple('10.0.2.4',8081,app)
